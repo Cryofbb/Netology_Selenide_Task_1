@@ -1,6 +1,5 @@
 package ru.netology;
 
-import com.codeborne.selenide.*;
 import org.junit.jupiter.api.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
