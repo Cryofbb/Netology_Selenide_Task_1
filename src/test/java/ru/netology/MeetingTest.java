@@ -288,5 +288,18 @@ public class MeetingTest {
         $$("button").find(exactText("Забронировать")).click();
         $("[data-test-id=name].input_invalid .input__sub").shouldBe(visible).shouldBe(exactText("Имя и Фамилия указаны неверно. Проверьте, что введённые данные совпадают с паспортными."));
     }
-
+    @Test
+    void shouldSubmitRequestWithDoubleName() {
+        LocalDate today = LocalDate.now();
+        LocalDate meetingDate = today.plusDays(3);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String dateFormatted = meetingDate.format(formatter);
+        $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя-имя Фамилия");
+        $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
+        $("[data-test-id=agreement]").click();
+        $$("button").find(exactText("Забронировать")).click();
+        $("[data-test-id='notification']").shouldBe(visible, Duration.ofSeconds(15));
+    }
 }
