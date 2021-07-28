@@ -13,6 +13,13 @@ import static com.codeborne.selenide.Selenide.*;
 
 
 public class MeetingTest {
+    public String dateFormatted (int days){
+        LocalDate today = LocalDate.now();
+        LocalDate meetingDate = today.plusDays(days);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        String formattedDate = meetingDate.format(formatter);
+        return formattedDate;
+    }
 
     @BeforeEach
     void setup() {
@@ -22,28 +29,21 @@ public class MeetingTest {
 
     @Test
     void shouldSubmitRequest() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
+
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
         $$("button").find(exactText("Забронировать")).click();
-        $("[data-test-id='notification']").shouldBe(visible, Duration.ofSeconds(15));
+        $("[data-test-id=notification] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + dateFormatted(3)));
     }
 
     @Test
     void shouldNotSubmitIfLess3Days() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
         $("[data-test-id='date'] .input__control").sendKeys(Keys.chord(Keys.CONTROL + "a", Keys.DELETE));
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(2));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -53,10 +53,6 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitIfEmptyDate() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
         $("[data-test-id='date'] .input__control").sendKeys(Keys.chord(Keys.CONTROL + "a", Keys.DELETE));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
@@ -67,27 +63,19 @@ public class MeetingTest {
     }
     @Test
     void shouldSubmit5Days() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(5);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(5));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
         $$("button").find(exactText("Забронировать")).click();
-        $("[data-test-id='notification']").shouldBe(visible, Duration.ofSeconds(15));
+        $("[data-test-id=notification] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + dateFormatted(3)));
     }
 
     @Test
     void shouldNotSubmitWithEmptyCity() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -97,12 +85,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitWithEmptyName() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -112,12 +96,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitWithEmptyPhone() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("");
         $("[data-test-id=agreement]").click();
@@ -127,12 +107,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitWithEmptyAgreement() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $$("button").find(exactText("Забронировать")).click();
@@ -141,42 +117,30 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitWithEnglishName() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Name");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
         $$("button").find(exactText("Забронировать")).click();
-        $("[data-test-id=name].input_invalid .input__sub").shouldBe(visible).shouldBe(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+        $("[data-test-id=name].input_invalid .input__sub").shouldBe(visible).shouldBe(exactText("Имя и Фамилия указаны неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
     @Test
     void shouldNotSubmitWithSymbolName() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("%Имя%");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
         $$("button").find(exactText("Забронировать")).click();
-        $("[data-test-id=name].input_invalid .input__sub").shouldBe(visible).shouldBe(exactText("Имя и Фамилия указаные неверно. Допустимы только русские буквы, пробелы и дефисы."));
+        $("[data-test-id=name].input_invalid .input__sub").shouldBe(visible).shouldBe(exactText("Имя и Фамилия указаны неверно. Допустимы только русские буквы, пробелы и дефисы."));
     }
 
     @Test
     void shouldNotSubmitWith10Phone() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+7012345678");
         $("[data-test-id=agreement]").click();
@@ -186,12 +150,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitWith12Phone() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+701234567890");
         $("[data-test-id=agreement]").click();
@@ -201,12 +161,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitWithoutPlusPhone() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("70123456789");
         $("[data-test-id=agreement]").click();
@@ -216,12 +172,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitWrongCity() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Мос");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -231,12 +183,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitEnglishCity() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Moscow");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -246,12 +194,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitForeignCity() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Киев");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -261,12 +205,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitSymbolCity() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Мос%ква");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -276,12 +216,8 @@ public class MeetingTest {
 
     @Test
     void shouldNotSubmitWithSingleName() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -290,16 +226,12 @@ public class MeetingTest {
     }
     @Test
     void shouldSubmitRequestWithDoubleName() {
-        LocalDate today = LocalDate.now();
-        LocalDate meetingDate = today.plusDays(3);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-        String dateFormatted = meetingDate.format(formatter);
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").setValue(dateFormatted);
+        $("[data-test-id='date'] .input__control").setValue(dateFormatted(3));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя-имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
         $$("button").find(exactText("Забронировать")).click();
-        $("[data-test-id='notification']").shouldBe(visible, Duration.ofSeconds(15));
+        $("[data-test-id=notification] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + dateFormatted(3)));
     }
 }
