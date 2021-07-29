@@ -24,7 +24,7 @@ public class MeetingTest {
     @BeforeEach
     void setup() {
         open("http://localhost:9999");
-
+        $("[data-test-id='date'] .input__control").sendKeys(Keys.chord(Keys.CONTROL + "a", Keys.DELETE));
     }
 
     @Test
@@ -42,7 +42,6 @@ public class MeetingTest {
     @Test
     void shouldNotSubmitIfLess3Days() {
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").sendKeys(Keys.chord(Keys.CONTROL + "a", Keys.DELETE));
         $("[data-test-id='date'] .input__control").setValue(dateFormatted(2));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
@@ -54,7 +53,6 @@ public class MeetingTest {
     @Test
     void shouldNotSubmitIfEmptyDate() {
         $("[data-test-id='city']").$("[placeholder='Город']").setValue("Москва");
-        $("[data-test-id='date'] .input__control").sendKeys(Keys.chord(Keys.CONTROL + "a", Keys.DELETE));
         $("[data-test-id= 'name']").$("[name ='name']").setValue("Имя Фамилия");
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
@@ -69,7 +67,7 @@ public class MeetingTest {
         $("[data-test-id='phone']").$("[name='phone']").setValue("+70123456789");
         $("[data-test-id=agreement]").click();
         $$("button").find(exactText("Забронировать")).click();
-        $("[data-test-id=notification] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + dateFormatted(3)));
+        $("[data-test-id=notification] .notification__content").shouldBe(visible, Duration.ofSeconds(15)).shouldBe(exactText("Встреча успешно забронирована на " + dateFormatted(5)));
     }
 
     @Test
